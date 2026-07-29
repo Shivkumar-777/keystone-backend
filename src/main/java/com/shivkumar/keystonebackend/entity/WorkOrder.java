@@ -1,0 +1,55 @@
+package com.shivkumar.keystonebackend.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "work_orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class WorkOrder {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+
+    @Column(length = 1000)
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private WorkOrderPriority priority;
+
+    @Enumerated(EnumType.STRING)
+    private WorkOrderStatus status;
+
+    private LocalDate scheduledDate;
+
+    private LocalDate completedDate;
+
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "site_id")
+    private Site site;
+
+    @ManyToOne
+    @JoinColumn(name = "technician_id")
+    private Technician technician;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+}
