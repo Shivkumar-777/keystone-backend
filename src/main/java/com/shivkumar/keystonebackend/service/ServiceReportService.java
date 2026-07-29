@@ -111,6 +111,9 @@ public class ServiceReportService {
                 .technicianId(report.getTechnician().getId())
                 .technicianName(report.getTechnician().getFullName())
 
+                // Module 12 - Attachments
+                .attachments(report.getAttachments())
+
                 .build();
     }
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "service_reports")
@@ -42,8 +44,19 @@ public class ServiceReport {
     @JoinColumn(name = "technician_id")
     private Technician technician;
 
+    @OneToMany(
+            mappedBy = "serviceReport",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<ServiceAttachment> attachments = new ArrayList<>();
+
     @PrePersist
     public void onCreate() {
-        reportDate = LocalDateTime.now();
+        if (reportDate == null) {
+            reportDate = LocalDateTime.now();
+        }
     }
 }

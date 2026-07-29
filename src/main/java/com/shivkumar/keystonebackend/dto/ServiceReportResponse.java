@@ -1,5 +1,6 @@
 package com.shivkumar.keystonebackend.dto;
 
+import com.shivkumar.keystonebackend.entity.ServiceAttachment;
 import com.shivkumar.keystonebackend.entity.ServiceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -35,4 +37,7 @@ public class ServiceReportResponse {
     private Long technicianId;
 
     private String technicianName;
+
+    // Uploaded attachments for this service report
+    private List<ServiceAttachment> attachments;
 }
