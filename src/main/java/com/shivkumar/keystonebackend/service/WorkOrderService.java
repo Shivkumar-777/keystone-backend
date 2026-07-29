@@ -3,6 +3,8 @@ package com.shivkumar.keystonebackend.service;
 import com.shivkumar.keystonebackend.dto.WorkOrderRequest;
 import com.shivkumar.keystonebackend.dto.WorkOrderResponse;
 import com.shivkumar.keystonebackend.entity.*;
+import com.shivkumar.keystonebackend.enums.NotificationType;
+import com.shivkumar.keystonebackend.enums.SLAStatus;
 import com.shivkumar.keystonebackend.repository.CustomerRepository;
 import com.shivkumar.keystonebackend.repository.SiteRepository;
 import com.shivkumar.keystonebackend.repository.TechnicianRepository;
@@ -10,6 +12,7 @@ import com.shivkumar.keystonebackend.repository.WorkOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,6 +23,7 @@ public class WorkOrderService {
     private final CustomerRepository customerRepository;
     private final SiteRepository siteRepository;
     private final TechnicianRepository technicianRepository;
+    private final NotificationService notificationService;
 
     // CREATE
     public WorkOrderResponse createWorkOrder(WorkOrderRequest request) {
@@ -33,6 +37,8 @@ public class WorkOrderService {
         Technician technician = technicianRepository.findById(request.getTechnicianId())
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
+        LocalDateTime slaDueDate = calculateSlaDueDate(request.getPriority());
+
         WorkOrder workOrder = WorkOrder.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -40,12 +46,23 @@ public class WorkOrderService {
                 .status(request.getStatus())
                 .scheduledDate(request.getScheduledDate())
                 .completedDate(request.getCompletedDate())
+                .slaDueDate(slaDueDate)
+                .slaStatus(SLAStatus.ON_TIME)
                 .customer(customer)
                 .site(site)
                 .technician(technician)
                 .build();
 
-        return mapToResponse(workOrderRepository.save(workOrder));
+        WorkOrder savedWorkOrder = workOrderRepository.save(workOrder);
+
+        notificationService.createNotification(
+                technician,
+                NotificationType.WORK_ORDER_ASSIGNED,
+                "New Work Order Assigned",
+                "You have been assigned Work Order #" + savedWorkOrder.getId()
+        );
+
+        return mapToResponse(savedWorkOrder);
     }
 
     // GET ALL
@@ -80,6 +97,13 @@ public class WorkOrderService {
         Technician technician = technicianRepository.findById(request.getTechnicianId())
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
+        boolean technicianChanged =
+                !workOrder.getTechnician().getId().equals(technician.getId());
+
+        boolean completedNow =
+                workOrder.getStatus() != WorkOrderStatus.COMPLETED
+                        && request.getStatus() == WorkOrderStatus.COMPLETED;
+
         workOrder.setTitle(request.getTitle());
         workOrder.setDescription(request.getDescription());
         workOrder.setPriority(request.getPriority());
@@ -90,7 +114,33 @@ public class WorkOrderService {
         workOrder.setSite(site);
         workOrder.setTechnician(technician);
 
-        return mapToResponse(workOrderRepository.save(workOrder));
+        WorkOrder updatedWorkOrder = workOrderRepository.save(workOrder);
+
+        // Notify reassigned technician
+        if (technicianChanged) {
+
+            notificationService.createNotification(
+                    technician,
+                    NotificationType.WORK_ORDER_ASSIGNED,
+                    "Work Order Assigned",
+                    "Work Order #" + updatedWorkOrder.getId()
+                            + " has been assigned to you."
+            );
+        }
+
+        // Notify completion
+        if (completedNow) {
+
+            notificationService.createNotification(
+                    technician,
+                    NotificationType.WORK_ORDER_COMPLETED,
+                    "Work Order Completed",
+                    "Work Order #" + updatedWorkOrder.getId()
+                            + " has been marked as completed."
+            );
+        }
+
+        return mapToResponse(updatedWorkOrder);
     }
 
     // DELETE
@@ -100,6 +150,25 @@ public class WorkOrderService {
                 .orElseThrow(() -> new RuntimeException("Work Order not found"));
 
         workOrderRepository.delete(workOrder);
+    }
+
+    /**
+     * Calculate SLA due date based on priority.
+     */
+    private LocalDateTime calculateSlaDueDate(WorkOrderPriority priority) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return switch (priority) {
+
+            case LOW -> now.plusHours(72);
+
+            case MEDIUM -> now.plusHours(24);
+
+            case HIGH -> now.plusHours(8);
+
+            case CRITICAL -> now.plusHours(4);
+        };
     }
 
     // ENTITY → RESPONSE DTO

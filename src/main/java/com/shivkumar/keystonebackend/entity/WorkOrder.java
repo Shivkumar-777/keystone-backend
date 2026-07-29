@@ -1,5 +1,6 @@
 package com.shivkumar.keystonebackend.entity;
 
+import com.shivkumar.keystonebackend.enums.SLAStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,18 @@ public class WorkOrder {
 
     private LocalDate completedDate;
 
+    /**
+     * SLA deadline for this work order.
+     */
+    private LocalDateTime slaDueDate;
+
+    /**
+     * Current SLA status.
+     */
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private SLAStatus slaStatus = SLAStatus.ON_TIME;
+
     private LocalDateTime createdAt;
 
     @ManyToOne
@@ -51,5 +64,9 @@ public class WorkOrder {
     @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();
+
+        if (slaStatus == null) {
+            slaStatus = SLAStatus.ON_TIME;
+        }
     }
 }
