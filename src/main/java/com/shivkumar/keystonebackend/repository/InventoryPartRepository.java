@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InventoryPartRepository extends JpaRepository<InventoryPart, Long> {
+
+    long countByQuantityLessThanEqual(Integer quantity);
+
+    long countByQuantity(Integer quantity);
+
 }
