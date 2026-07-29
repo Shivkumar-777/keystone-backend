@@ -4,6 +4,7 @@ import com.shivkumar.keystonebackend.dto.SiteRequest;
 import com.shivkumar.keystonebackend.dto.SiteResponse;
 import com.shivkumar.keystonebackend.service.SiteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,26 +17,108 @@ public class SiteController {
 
     private final SiteService siteService;
 
-    // Create Site
+    // ==========================
+    // CREATE
+    // ==========================
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SiteResponse createSite(@RequestBody SiteRequest request) {
+
         return siteService.createSite(request);
     }
 
-    // Get All Sites
+    // ==========================
+    // GET ALL
+    // ==========================
+
     @GetMapping
     public List<SiteResponse> getAllSites() {
+
         return siteService.getAllSites();
     }
 
-    // Get Site By ID
+    // ==========================
+    // SEARCH BY SITE NAME
+    // Example:
+    // /api/sites/search?siteName=Factory&page=0&size=10
+    // ==========================
+
+    @GetMapping("/search")
+    public Page<SiteResponse> searchSites(
+            @RequestParam String siteName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return siteService.searchSites(siteName, page, size);
+    }
+
+    // ==========================
+    // SEARCH BY CITY
+    // ==========================
+
+    @GetMapping("/search/city")
+    public Page<SiteResponse> searchByCity(
+            @RequestParam String city,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return siteService.searchByCity(city, page, size);
+    }
+
+    // ==========================
+    // SEARCH BY STATE
+    // ==========================
+
+    @GetMapping("/search/state")
+    public Page<SiteResponse> searchByState(
+            @RequestParam String state,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return siteService.searchByState(state, page, size);
+    }
+
+    // ==========================
+    // SEARCH BY POSTAL CODE
+    // ==========================
+
+    @GetMapping("/search/postal-code")
+    public Page<SiteResponse> searchByPostalCode(
+            @RequestParam String postalCode,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return siteService.searchByPostalCode(postalCode, page, size);
+    }
+
+    // ==========================
+    // FILTER BY CUSTOMER
+    // ==========================
+
+    @GetMapping("/customer/{customerId}")
+    public Page<SiteResponse> getSitesByCustomer(
+            @PathVariable Long customerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return siteService.getSitesByCustomer(customerId, page, size);
+    }
+
+    // ==========================
+    // GET BY ID
+    // ==========================
+
     @GetMapping("/{id}")
     public SiteResponse getSiteById(@PathVariable Long id) {
+
         return siteService.getSiteById(id);
     }
 
-    // Update Site
+    // ==========================
+    // UPDATE
+    // ==========================
+
     @PutMapping("/{id}")
     public SiteResponse updateSite(
             @PathVariable Long id,
@@ -44,10 +127,14 @@ public class SiteController {
         return siteService.updateSite(id, request);
     }
 
-    // Delete Site
+    // ==========================
+    // DELETE
+    // ==========================
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSite(@PathVariable Long id) {
+
         siteService.deleteSite(id);
     }
 }

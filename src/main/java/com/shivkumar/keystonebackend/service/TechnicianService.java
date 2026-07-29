@@ -8,6 +8,9 @@ import com.shivkumar.keystonebackend.enums.TechnicianStatus;
 import com.shivkumar.keystonebackend.repository.CompanyRepository;
 import com.shivkumar.keystonebackend.repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +22,10 @@ public class TechnicianService {
     private final TechnicianRepository technicianRepository;
     private final CompanyRepository companyRepository;
 
-    // Create Technician
+    // ==========================
+    // CREATE TECHNICIAN
+    // ==========================
+
     public TechnicianResponse createTechnician(TechnicianRequest request) {
 
         Company company = companyRepository.findById(request.getCompanyId())
@@ -40,7 +46,10 @@ public class TechnicianService {
         return mapToResponse(savedTechnician);
     }
 
-    // Get All Technicians
+    // ==========================
+    // GET ALL TECHNICIANS
+    // ==========================
+
     public List<TechnicianResponse> getAllTechnicians() {
 
         return technicianRepository.findAll()
@@ -49,7 +58,95 @@ public class TechnicianService {
                 .toList();
     }
 
-    // Get Technician By ID
+    // ==========================
+    // SEARCH BY NAME
+    // ==========================
+
+    public Page<TechnicianResponse> searchTechnicians(
+            String fullName,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return technicianRepository
+                .findByFullNameContainingIgnoreCase(fullName, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY EMAIL
+    // ==========================
+
+    public Page<TechnicianResponse> searchByEmail(
+            String email,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return technicianRepository
+                .findByEmailContainingIgnoreCase(email, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY PHONE
+    // ==========================
+
+    public Page<TechnicianResponse> searchByPhone(
+            String phone,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return technicianRepository
+                .findByPhoneContaining(phone, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY SPECIALIZATION
+    // ==========================
+
+    public Page<TechnicianResponse> searchBySpecialization(
+            String specialization,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return technicianRepository
+                .findBySpecializationContainingIgnoreCase(specialization, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY STATUS
+    // ==========================
+
+    public Page<TechnicianResponse> getTechniciansByStatus(
+            TechnicianStatus status,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return technicianRepository
+                .findByStatus(status, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // GET TECHNICIAN BY ID
+    // ==========================
+
     public TechnicianResponse getTechnicianById(Long id) {
 
         Technician technician = technicianRepository.findById(id)
@@ -58,7 +155,10 @@ public class TechnicianService {
         return mapToResponse(technician);
     }
 
-    // Update Technician
+    // ==========================
+    // UPDATE TECHNICIAN
+    // ==========================
+
     public TechnicianResponse updateTechnician(Long id, TechnicianRequest request) {
 
         Technician technician = technicianRepository.findById(id)
@@ -79,7 +179,10 @@ public class TechnicianService {
         return mapToResponse(updatedTechnician);
     }
 
-    // Delete Technician
+    // ==========================
+    // DELETE TECHNICIAN
+    // ==========================
+
     public void deleteTechnician(Long id) {
 
         Technician technician = technicianRepository.findById(id)
@@ -88,7 +191,10 @@ public class TechnicianService {
         technicianRepository.delete(technician);
     }
 
-    // Entity -> DTO Mapper
+    // ==========================
+    // ENTITY -> RESPONSE DTO
+    // ==========================
+
     private TechnicianResponse mapToResponse(Technician technician) {
 
         return TechnicianResponse.builder()

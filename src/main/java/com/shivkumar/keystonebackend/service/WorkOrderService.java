@@ -10,6 +10,9 @@ import com.shivkumar.keystonebackend.repository.SiteRepository;
 import com.shivkumar.keystonebackend.repository.TechnicianRepository;
 import com.shivkumar.keystonebackend.repository.WorkOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +28,9 @@ public class WorkOrderService {
     private final TechnicianRepository technicianRepository;
     private final NotificationService notificationService;
 
+    // ==========================
     // CREATE
+    // ==========================
     public WorkOrderResponse createWorkOrder(WorkOrderRequest request) {
 
         Customer customer = customerRepository.findById(request.getCustomerId())
@@ -65,7 +70,9 @@ public class WorkOrderService {
         return mapToResponse(savedWorkOrder);
     }
 
+    // ==========================
     // GET ALL
+    // ==========================
     public List<WorkOrderResponse> getAllWorkOrders() {
         return workOrderRepository.findAll()
                 .stream()
@@ -73,7 +80,105 @@ public class WorkOrderService {
                 .toList();
     }
 
+    // ==========================
+    // SEARCH BY TITLE
+    // ==========================
+    public Page<WorkOrderResponse> searchWorkOrders(
+            String title,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findByTitleContainingIgnoreCase(title, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY STATUS
+    // ==========================
+    public Page<WorkOrderResponse> getWorkOrdersByStatus(
+            WorkOrderStatus status,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findByStatus(status, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY PRIORITY
+    // ==========================
+    public Page<WorkOrderResponse> getWorkOrdersByPriority(
+            WorkOrderPriority priority,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findByPriority(priority, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY CUSTOMER
+    // ==========================
+    public Page<WorkOrderResponse> getWorkOrdersByCustomer(
+            Long customerId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findByCustomerId(customerId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY TECHNICIAN
+    // ==========================
+    public Page<WorkOrderResponse> getWorkOrdersByTechnician(
+            Long technicianId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findByTechnicianId(technicianId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY SITE
+    // ==========================
+    public Page<WorkOrderResponse> getWorkOrdersBySite(
+            Long siteId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return workOrderRepository
+                .findBySiteId(siteId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
     // GET BY ID
+    // ==========================
     public WorkOrderResponse getWorkOrderById(Long id) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -82,7 +187,9 @@ public class WorkOrderService {
         return mapToResponse(workOrder);
     }
 
+    // ==========================
     // UPDATE
+    // ==========================
     public WorkOrderResponse updateWorkOrder(Long id, WorkOrderRequest request) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -143,7 +250,9 @@ public class WorkOrderService {
         return mapToResponse(updatedWorkOrder);
     }
 
+    // ==========================
     // DELETE
+    // ==========================
     public void deleteWorkOrder(Long id) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -152,9 +261,9 @@ public class WorkOrderService {
         workOrderRepository.delete(workOrder);
     }
 
-    /**
-     * Calculate SLA due date based on priority.
-     */
+    // ==========================
+    // CALCULATE SLA DUE DATE
+    // ==========================
     private LocalDateTime calculateSlaDueDate(WorkOrderPriority priority) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -171,7 +280,9 @@ public class WorkOrderService {
         };
     }
 
+    // ==========================
     // ENTITY → RESPONSE DTO
+    // ==========================
     private WorkOrderResponse mapToResponse(WorkOrder workOrder) {
 
         return WorkOrderResponse.builder()

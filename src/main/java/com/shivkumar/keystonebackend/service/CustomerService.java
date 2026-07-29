@@ -7,6 +7,9 @@ import com.shivkumar.keystonebackend.entity.Customer;
 import com.shivkumar.keystonebackend.repository.CompanyRepository;
 import com.shivkumar.keystonebackend.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +21,10 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
 
-    // Create Customer
+    // ==========================
+    // CREATE CUSTOMER
+    // ==========================
+
     public CustomerResponse createCustomer(CustomerRequest request) {
 
         Company company = companyRepository.findById(request.getCompanyId())
@@ -37,7 +43,10 @@ public class CustomerService {
         return mapToResponse(savedCustomer);
     }
 
-    // Get All Customers
+    // ==========================
+    // GET ALL CUSTOMERS
+    // ==========================
+
     public List<CustomerResponse> getAllCustomers() {
 
         return customerRepository.findAll()
@@ -46,7 +55,61 @@ public class CustomerService {
                 .toList();
     }
 
-    // Get Customer By ID
+    // ==========================
+    // SEARCH BY CUSTOMER NAME
+    // ==========================
+
+    public Page<CustomerResponse> searchCustomers(
+            String customerName,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return customerRepository
+                .findByCustomerNameContainingIgnoreCase(customerName, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY EMAIL
+    // ==========================
+
+    public Page<CustomerResponse> searchByEmail(
+            String email,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return customerRepository
+                .findByEmailContainingIgnoreCase(email, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY PHONE
+    // ==========================
+
+    public Page<CustomerResponse> searchByPhone(
+            String phone,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return customerRepository
+                .findByPhoneContaining(phone, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // GET CUSTOMER BY ID
+    // ==========================
+
     public CustomerResponse getCustomerById(Long id) {
 
         Customer customer = customerRepository.findById(id)
@@ -55,7 +118,10 @@ public class CustomerService {
         return mapToResponse(customer);
     }
 
-    // Update Customer
+    // ==========================
+    // UPDATE CUSTOMER
+    // ==========================
+
     public CustomerResponse updateCustomer(Long id, CustomerRequest request) {
 
         Customer customer = customerRepository.findById(id)
@@ -75,7 +141,10 @@ public class CustomerService {
         return mapToResponse(updatedCustomer);
     }
 
-    // Delete Customer
+    // ==========================
+    // DELETE CUSTOMER
+    // ==========================
+
     public void deleteCustomer(Long id) {
 
         Customer customer = customerRepository.findById(id)
@@ -84,7 +153,10 @@ public class CustomerService {
         customerRepository.delete(customer);
     }
 
-    // Entity -> DTO Mapper
+    // ==========================
+    // ENTITY → RESPONSE DTO
+    // ==========================
+
     private CustomerResponse mapToResponse(Customer customer) {
 
         return CustomerResponse.builder()

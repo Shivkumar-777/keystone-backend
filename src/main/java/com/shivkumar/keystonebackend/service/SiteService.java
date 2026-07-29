@@ -7,6 +7,9 @@ import com.shivkumar.keystonebackend.entity.Site;
 import com.shivkumar.keystonebackend.repository.CustomerRepository;
 import com.shivkumar.keystonebackend.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +21,10 @@ public class SiteService {
     private final SiteRepository siteRepository;
     private final CustomerRepository customerRepository;
 
-    // Create Site
+    // ==========================
+    // CREATE
+    // ==========================
+
     public SiteResponse createSite(SiteRequest request) {
 
         Customer customer = customerRepository.findById(request.getCustomerId())
@@ -33,12 +39,13 @@ public class SiteService {
                 .customer(customer)
                 .build();
 
-        Site savedSite = siteRepository.save(site);
-
-        return mapToResponse(savedSite);
+        return mapToResponse(siteRepository.save(site));
     }
 
-    // Get All Sites
+    // ==========================
+    // GET ALL
+    // ==========================
+
     public List<SiteResponse> getAllSites() {
 
         return siteRepository.findAll()
@@ -47,7 +54,95 @@ public class SiteService {
                 .toList();
     }
 
-    // Get Site By ID
+    // ==========================
+    // SEARCH BY SITE NAME
+    // ==========================
+
+    public Page<SiteResponse> searchSites(
+            String siteName,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return siteRepository
+                .findBySiteNameContainingIgnoreCase(siteName, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY CITY
+    // ==========================
+
+    public Page<SiteResponse> searchByCity(
+            String city,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return siteRepository
+                .findByCityContainingIgnoreCase(city, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY STATE
+    // ==========================
+
+    public Page<SiteResponse> searchByState(
+            String state,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return siteRepository
+                .findByStateContainingIgnoreCase(state, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH BY POSTAL CODE
+    // ==========================
+
+    public Page<SiteResponse> searchByPostalCode(
+            String postalCode,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return siteRepository
+                .findByPostalCodeContaining(postalCode, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY CUSTOMER
+    // ==========================
+
+    public Page<SiteResponse> getSitesByCustomer(
+            Long customerId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return siteRepository
+                .findByCustomerId(customerId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // GET BY ID
+    // ==========================
+
     public SiteResponse getSiteById(Long id) {
 
         Site site = siteRepository.findById(id)
@@ -56,7 +151,10 @@ public class SiteService {
         return mapToResponse(site);
     }
 
-    // Update Site
+    // ==========================
+    // UPDATE
+    // ==========================
+
     public SiteResponse updateSite(Long id, SiteRequest request) {
 
         Site site = siteRepository.findById(id)
@@ -72,12 +170,13 @@ public class SiteService {
         site.setPostalCode(request.getPostalCode());
         site.setCustomer(customer);
 
-        Site updatedSite = siteRepository.save(site);
-
-        return mapToResponse(updatedSite);
+        return mapToResponse(siteRepository.save(site));
     }
 
-    // Delete Site
+    // ==========================
+    // DELETE
+    // ==========================
+
     public void deleteSite(Long id) {
 
         Site site = siteRepository.findById(id)
@@ -86,7 +185,10 @@ public class SiteService {
         siteRepository.delete(site);
     }
 
-    // Entity -> DTO Mapper
+    // ==========================
+    // ENTITY → RESPONSE DTO
+    // ==========================
+
     private SiteResponse mapToResponse(Site site) {
 
         return SiteResponse.builder()

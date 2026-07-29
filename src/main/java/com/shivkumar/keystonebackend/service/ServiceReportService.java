@@ -3,14 +3,19 @@ package com.shivkumar.keystonebackend.service;
 import com.shivkumar.keystonebackend.dto.ServiceReportRequest;
 import com.shivkumar.keystonebackend.dto.ServiceReportResponse;
 import com.shivkumar.keystonebackend.entity.ServiceReport;
+import com.shivkumar.keystonebackend.entity.ServiceStatus;
 import com.shivkumar.keystonebackend.entity.Technician;
 import com.shivkumar.keystonebackend.entity.WorkOrder;
 import com.shivkumar.keystonebackend.repository.ServiceReportRepository;
 import com.shivkumar.keystonebackend.repository.TechnicianRepository;
 import com.shivkumar.keystonebackend.repository.WorkOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,7 +26,10 @@ public class ServiceReportService {
     private final WorkOrderRepository workOrderRepository;
     private final TechnicianRepository technicianRepository;
 
+    // ==========================
     // CREATE
+    // ==========================
+
     public ServiceReportResponse createServiceReport(ServiceReportRequest request) {
 
         WorkOrder workOrder = workOrderRepository.findById(request.getWorkOrderId())
@@ -43,7 +51,10 @@ public class ServiceReportService {
         return mapToResponse(serviceReportRepository.save(report));
     }
 
+    // ==========================
     // GET ALL
+    // ==========================
+
     public List<ServiceReportResponse> getAllServiceReports() {
 
         return serviceReportRepository.findAll()
@@ -52,7 +63,130 @@ public class ServiceReportService {
                 .toList();
     }
 
+    // ==========================
+    // SEARCH WORK PERFORMED
+    // ==========================
+
+    public Page<ServiceReportResponse> searchWorkPerformed(
+            String workPerformed,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByWorkPerformedContainingIgnoreCase(workPerformed, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH TECHNICIAN NOTES
+    // ==========================
+
+    public Page<ServiceReportResponse> searchTechnicianNotes(
+            String technicianNotes,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByTechnicianNotesContainingIgnoreCase(technicianNotes, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // SEARCH CUSTOMER FEEDBACK
+    // ==========================
+
+    public Page<ServiceReportResponse> searchCustomerFeedback(
+            String customerFeedback,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByCustomerFeedbackContainingIgnoreCase(customerFeedback, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY WORK ORDER
+    // ==========================
+
+    public Page<ServiceReportResponse> getReportsByWorkOrder(
+            Long workOrderId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByWorkOrderId(workOrderId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY TECHNICIAN
+    // ==========================
+
+    public Page<ServiceReportResponse> getReportsByTechnician(
+            Long technicianId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByTechnicianId(technicianId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY STATUS
+    // ==========================
+
+    public Page<ServiceReportResponse> getReportsByStatus(
+            ServiceStatus status,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByStatus(status, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
+    // FILTER BY REPORT DATE
+    // ==========================
+
+    public Page<ServiceReportResponse> getReportsByDateRange(
+            LocalDateTime start,
+            LocalDateTime end,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return serviceReportRepository
+                .findByReportDateBetween(start, end, pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ==========================
     // GET BY ID
+    // ==========================
+
     public ServiceReportResponse getServiceReportById(Long id) {
 
         ServiceReport report = serviceReportRepository.findById(id)
@@ -61,7 +195,10 @@ public class ServiceReportService {
         return mapToResponse(report);
     }
 
+    // ==========================
     // UPDATE
+    // ==========================
+
     public ServiceReportResponse updateServiceReport(Long id, ServiceReportRequest request) {
 
         ServiceReport report = serviceReportRepository.findById(id)
@@ -84,7 +221,10 @@ public class ServiceReportService {
         return mapToResponse(serviceReportRepository.save(report));
     }
 
+    // ==========================
     // DELETE
+    // ==========================
+
     public void deleteServiceReport(Long id) {
 
         ServiceReport report = serviceReportRepository.findById(id)
@@ -93,7 +233,10 @@ public class ServiceReportService {
         serviceReportRepository.delete(report);
     }
 
+    // ==========================
     // ENTITY → RESPONSE DTO
+    // ==========================
+
     private ServiceReportResponse mapToResponse(ServiceReport report) {
 
         return ServiceReportResponse.builder()
