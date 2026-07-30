@@ -4,6 +4,7 @@ import com.shivkumar.keystonebackend.dto.ServiceReportRequest;
 import com.shivkumar.keystonebackend.dto.ServiceReportResponse;
 import com.shivkumar.keystonebackend.entity.ServiceStatus;
 import com.shivkumar.keystonebackend.service.ServiceReportService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ServiceReportController {
 
     @PostMapping
     public ServiceReportResponse createServiceReport(
-            @RequestBody ServiceReportRequest request) {
+            @Valid @RequestBody ServiceReportRequest request) {
 
         return serviceReportService.createServiceReport(request);
     }
@@ -145,8 +146,6 @@ public class ServiceReportController {
 
     // ==========================
     // FILTER BY DATE RANGE
-    // Example:
-    // /api/service-reports/date-range?start=2026-01-01T00:00:00&end=2026-01-31T23:59:59
     // ==========================
 
     @GetMapping("/date-range")
@@ -182,7 +181,7 @@ public class ServiceReportController {
     @PutMapping("/{id}")
     public ServiceReportResponse updateServiceReport(
             @PathVariable Long id,
-            @RequestBody ServiceReportRequest request) {
+            @Valid @RequestBody ServiceReportRequest request) {
 
         return serviceReportService.updateServiceReport(id, request);
     }

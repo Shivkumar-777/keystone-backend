@@ -3,6 +3,7 @@ package com.shivkumar.keystonebackend.controller;
 import com.shivkumar.keystonebackend.dto.CustomerRequest;
 import com.shivkumar.keystonebackend.dto.CustomerResponse;
 import com.shivkumar.keystonebackend.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerResponse createCustomer(@RequestBody CustomerRequest request) {
+    public CustomerResponse createCustomer(@Valid @RequestBody CustomerRequest request) {
         return customerService.createCustomer(request);
     }
 
@@ -100,7 +101,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public CustomerResponse updateCustomer(
             @PathVariable Long id,
-            @RequestBody CustomerRequest request
+            @Valid @RequestBody CustomerRequest request
     ) {
 
         return customerService.updateCustomer(id, request);

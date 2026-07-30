@@ -3,6 +3,7 @@ package com.shivkumar.keystonebackend.controller;
 import com.shivkumar.keystonebackend.dto.SiteRequest;
 import com.shivkumar.keystonebackend.dto.SiteResponse;
 import com.shivkumar.keystonebackend.service.SiteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class SiteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SiteResponse createSite(@RequestBody SiteRequest request) {
+    public SiteResponse createSite(@Valid @RequestBody SiteRequest request) {
 
         return siteService.createSite(request);
     }
@@ -122,7 +123,7 @@ public class SiteController {
     @PutMapping("/{id}")
     public SiteResponse updateSite(
             @PathVariable Long id,
-            @RequestBody SiteRequest request) {
+            @Valid @RequestBody SiteRequest request) {
 
         return siteService.updateSite(id, request);
     }

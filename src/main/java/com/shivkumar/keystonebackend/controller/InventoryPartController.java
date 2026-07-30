@@ -3,6 +3,7 @@ package com.shivkumar.keystonebackend.controller;
 import com.shivkumar.keystonebackend.dto.InventoryPartRequest;
 import com.shivkumar.keystonebackend.dto.InventoryPartResponse;
 import com.shivkumar.keystonebackend.service.InventoryPartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class InventoryPartController {
     // CREATE
     @PostMapping
     public InventoryPartResponse createInventoryPart(
-            @RequestBody InventoryPartRequest request) {
+            @Valid @RequestBody InventoryPartRequest request) {
 
         return inventoryPartService.createInventoryPart(request);
     }
@@ -42,7 +43,7 @@ public class InventoryPartController {
     @PutMapping("/{id}")
     public InventoryPartResponse updateInventoryPart(
             @PathVariable Long id,
-            @RequestBody InventoryPartRequest request) {
+            @Valid @RequestBody InventoryPartRequest request) {
 
         return inventoryPartService.updateInventoryPart(id, request);
     }

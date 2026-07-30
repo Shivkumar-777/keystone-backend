@@ -3,6 +3,7 @@ package com.shivkumar.keystonebackend.controller;
 import com.shivkumar.keystonebackend.dto.CompanyRequest;
 import com.shivkumar.keystonebackend.dto.CompanyResponse;
 import com.shivkumar.keystonebackend.service.CompanyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CompanyController {
     // Create Company
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompanyResponse createCompany(@RequestBody CompanyRequest request) {
+    public CompanyResponse createCompany(@Valid @RequestBody CompanyRequest request) {
         return companyService.createCompany(request);
     }
 
@@ -39,7 +40,7 @@ public class CompanyController {
     @PutMapping("/{id}")
     public CompanyResponse updateCompany(
             @PathVariable Long id,
-            @RequestBody CompanyRequest request) {
+            @Valid @RequestBody CompanyRequest request) {
 
         return companyService.updateCompany(id, request);
     }

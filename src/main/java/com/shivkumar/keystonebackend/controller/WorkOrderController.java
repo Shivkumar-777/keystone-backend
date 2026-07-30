@@ -5,6 +5,7 @@ import com.shivkumar.keystonebackend.dto.WorkOrderResponse;
 import com.shivkumar.keystonebackend.entity.WorkOrderPriority;
 import com.shivkumar.keystonebackend.entity.WorkOrderStatus;
 import com.shivkumar.keystonebackend.service.WorkOrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,9 @@ public class WorkOrderController {
     // ==========================
 
     @PostMapping
-    public WorkOrderResponse createWorkOrder(@RequestBody WorkOrderRequest request) {
+    public WorkOrderResponse createWorkOrder(
+            @Valid @RequestBody WorkOrderRequest request) {
+
         return workOrderService.createWorkOrder(request);
     }
 
@@ -142,7 +145,7 @@ public class WorkOrderController {
     @PutMapping("/{id}")
     public WorkOrderResponse updateWorkOrder(
             @PathVariable Long id,
-            @RequestBody WorkOrderRequest request
+            @Valid @RequestBody WorkOrderRequest request
     ) {
 
         return workOrderService.updateWorkOrder(id, request);

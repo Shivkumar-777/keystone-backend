@@ -4,6 +4,7 @@ import com.shivkumar.keystonebackend.dto.TechnicianRequest;
 import com.shivkumar.keystonebackend.dto.TechnicianResponse;
 import com.shivkumar.keystonebackend.enums.TechnicianStatus;
 import com.shivkumar.keystonebackend.service.TechnicianService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class TechnicianController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TechnicianResponse createTechnician(
-            @RequestBody TechnicianRequest request) {
+            @Valid @RequestBody TechnicianRequest request) {
 
         return technicianService.createTechnician(request);
     }
@@ -140,7 +141,7 @@ public class TechnicianController {
     @PutMapping("/{id}")
     public TechnicianResponse updateTechnician(
             @PathVariable Long id,
-            @RequestBody TechnicianRequest request) {
+            @Valid @RequestBody TechnicianRequest request) {
 
         return technicianService.updateTechnician(id, request);
     }
