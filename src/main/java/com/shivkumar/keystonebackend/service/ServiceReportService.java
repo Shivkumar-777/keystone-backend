@@ -14,12 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ServiceReportService {
 
     private final ServiceReportRepository serviceReportRepository;
@@ -55,6 +57,7 @@ public class ServiceReportService {
     // GET ALL
     // ==========================
 
+    @Transactional(readOnly = true)
     public List<ServiceReportResponse> getAllServiceReports() {
 
         return serviceReportRepository.findAll()
@@ -67,11 +70,11 @@ public class ServiceReportService {
     // SEARCH WORK PERFORMED
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> searchWorkPerformed(
             String workPerformed,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -84,11 +87,11 @@ public class ServiceReportService {
     // SEARCH TECHNICIAN NOTES
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> searchTechnicianNotes(
             String technicianNotes,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -101,11 +104,11 @@ public class ServiceReportService {
     // SEARCH CUSTOMER FEEDBACK
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> searchCustomerFeedback(
             String customerFeedback,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -118,11 +121,11 @@ public class ServiceReportService {
     // FILTER BY WORK ORDER
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> getReportsByWorkOrder(
             Long workOrderId,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -135,11 +138,11 @@ public class ServiceReportService {
     // FILTER BY TECHNICIAN
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> getReportsByTechnician(
             Long technicianId,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -152,11 +155,11 @@ public class ServiceReportService {
     // FILTER BY STATUS
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> getReportsByStatus(
             ServiceStatus status,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -169,12 +172,12 @@ public class ServiceReportService {
     // FILTER BY REPORT DATE
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<ServiceReportResponse> getReportsByDateRange(
             LocalDateTime start,
             LocalDateTime end,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -187,6 +190,7 @@ public class ServiceReportService {
     // GET BY ID
     // ==========================
 
+    @Transactional(readOnly = true)
     public ServiceReportResponse getServiceReportById(Long id) {
 
         ServiceReport report = serviceReportRepository.findById(id)

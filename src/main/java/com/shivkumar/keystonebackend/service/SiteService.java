@@ -11,11 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SiteService {
 
     private final SiteRepository siteRepository;
@@ -46,6 +48,7 @@ public class SiteService {
     // GET ALL
     // ==========================
 
+    @Transactional(readOnly = true)
     public List<SiteResponse> getAllSites() {
 
         return siteRepository.findAll()
@@ -58,11 +61,11 @@ public class SiteService {
     // SEARCH BY SITE NAME
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<SiteResponse> searchSites(
             String siteName,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -75,11 +78,11 @@ public class SiteService {
     // SEARCH BY CITY
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<SiteResponse> searchByCity(
             String city,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -92,11 +95,11 @@ public class SiteService {
     // SEARCH BY STATE
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<SiteResponse> searchByState(
             String state,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -109,11 +112,11 @@ public class SiteService {
     // SEARCH BY POSTAL CODE
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<SiteResponse> searchByPostalCode(
             String postalCode,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -126,11 +129,11 @@ public class SiteService {
     // FILTER BY CUSTOMER
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<SiteResponse> getSitesByCustomer(
             Long customerId,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -143,6 +146,7 @@ public class SiteService {
     // GET BY ID
     // ==========================
 
+    @Transactional(readOnly = true)
     public SiteResponse getSiteById(Long id) {
 
         Site site = siteRepository.findById(id)

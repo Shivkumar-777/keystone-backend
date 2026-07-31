@@ -12,11 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TechnicianService {
 
     private final TechnicianRepository technicianRepository;
@@ -50,6 +52,7 @@ public class TechnicianService {
     // GET ALL TECHNICIANS
     // ==========================
 
+    @Transactional(readOnly = true)
     public List<TechnicianResponse> getAllTechnicians() {
 
         return technicianRepository.findAll()
@@ -62,11 +65,11 @@ public class TechnicianService {
     // SEARCH BY NAME
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<TechnicianResponse> searchTechnicians(
             String fullName,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -79,11 +82,11 @@ public class TechnicianService {
     // SEARCH BY EMAIL
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<TechnicianResponse> searchByEmail(
             String email,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -96,11 +99,11 @@ public class TechnicianService {
     // SEARCH BY PHONE
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<TechnicianResponse> searchByPhone(
             String phone,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -113,11 +116,11 @@ public class TechnicianService {
     // SEARCH BY SPECIALIZATION
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<TechnicianResponse> searchBySpecialization(
             String specialization,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -130,11 +133,11 @@ public class TechnicianService {
     // FILTER BY STATUS
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<TechnicianResponse> getTechniciansByStatus(
             TechnicianStatus status,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -147,6 +150,7 @@ public class TechnicianService {
     // GET TECHNICIAN BY ID
     // ==========================
 
+    @Transactional(readOnly = true)
     public TechnicianResponse getTechnicianById(Long id) {
 
         Technician technician = technicianRepository.findById(id)

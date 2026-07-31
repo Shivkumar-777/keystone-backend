@@ -11,11 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -47,6 +49,7 @@ public class CustomerService {
     // GET ALL CUSTOMERS
     // ==========================
 
+    @Transactional(readOnly = true)
     public List<CustomerResponse> getAllCustomers() {
 
         return customerRepository.findAll()
@@ -59,11 +62,11 @@ public class CustomerService {
     // SEARCH BY CUSTOMER NAME
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<CustomerResponse> searchCustomers(
             String customerName,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -76,11 +79,11 @@ public class CustomerService {
     // SEARCH BY EMAIL
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<CustomerResponse> searchByEmail(
             String email,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -93,11 +96,11 @@ public class CustomerService {
     // SEARCH BY PHONE
     // ==========================
 
+    @Transactional(readOnly = true)
     public Page<CustomerResponse> searchByPhone(
             String phone,
             int page,
-            int size
-    ) {
+            int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -110,6 +113,7 @@ public class CustomerService {
     // GET CUSTOMER BY ID
     // ==========================
 
+    @Transactional(readOnly = true)
     public CustomerResponse getCustomerById(Long id) {
 
         Customer customer = customerRepository.findById(id)

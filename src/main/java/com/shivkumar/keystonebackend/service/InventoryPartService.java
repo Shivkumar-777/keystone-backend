@@ -8,17 +8,22 @@ import com.shivkumar.keystonebackend.repository.CompanyRepository;
 import com.shivkumar.keystonebackend.repository.InventoryPartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class InventoryPartService {
 
     private final InventoryPartRepository inventoryPartRepository;
     private final CompanyRepository companyRepository;
 
+    // ==========================
     // CREATE
+    // ==========================
+
     public InventoryPartResponse createInventoryPart(InventoryPartRequest request) {
 
         Company company = companyRepository.findById(request.getCompanyId())
@@ -38,15 +43,24 @@ public class InventoryPartService {
         return mapToResponse(inventoryPartRepository.save(part));
     }
 
+    // ==========================
     // GET ALL
+    // ==========================
+
+    @Transactional(readOnly = true)
     public List<InventoryPartResponse> getAllInventoryParts() {
+
         return inventoryPartRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
+    // ==========================
     // GET BY ID
+    // ==========================
+
+    @Transactional(readOnly = true)
     public InventoryPartResponse getInventoryPartById(Long id) {
 
         InventoryPart part = inventoryPartRepository.findById(id)
@@ -55,7 +69,10 @@ public class InventoryPartService {
         return mapToResponse(part);
     }
 
+    // ==========================
     // UPDATE
+    // ==========================
+
     public InventoryPartResponse updateInventoryPart(Long id, InventoryPartRequest request) {
 
         InventoryPart part = inventoryPartRepository.findById(id)
@@ -76,7 +93,10 @@ public class InventoryPartService {
         return mapToResponse(inventoryPartRepository.save(part));
     }
 
+    // ==========================
     // DELETE
+    // ==========================
+
     public void deleteInventoryPart(Long id) {
 
         InventoryPart part = inventoryPartRepository.findById(id)
@@ -85,7 +105,10 @@ public class InventoryPartService {
         inventoryPartRepository.delete(part);
     }
 
+    // ==========================
     // ENTITY → RESPONSE DTO
+    // ==========================
+
     private InventoryPartResponse mapToResponse(InventoryPart part) {
 
         boolean lowStock = part.getQuantity() <= part.getMinimumStock();

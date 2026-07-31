@@ -14,12 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WorkOrderService {
 
     private final WorkOrderRepository workOrderRepository;
@@ -31,6 +33,7 @@ public class WorkOrderService {
     // ==========================
     // CREATE
     // ==========================
+
     public WorkOrderResponse createWorkOrder(WorkOrderRequest request) {
 
         Customer customer = customerRepository.findById(request.getCustomerId())
@@ -73,7 +76,10 @@ public class WorkOrderService {
     // ==========================
     // GET ALL
     // ==========================
+
+    @Transactional(readOnly = true)
     public List<WorkOrderResponse> getAllWorkOrders() {
+
         return workOrderRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -83,6 +89,8 @@ public class WorkOrderService {
     // ==========================
     // SEARCH BY TITLE
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> searchWorkOrders(
             String title,
             int page,
@@ -99,6 +107,8 @@ public class WorkOrderService {
     // ==========================
     // FILTER BY STATUS
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> getWorkOrdersByStatus(
             WorkOrderStatus status,
             int page,
@@ -115,6 +125,8 @@ public class WorkOrderService {
     // ==========================
     // FILTER BY PRIORITY
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> getWorkOrdersByPriority(
             WorkOrderPriority priority,
             int page,
@@ -131,6 +143,8 @@ public class WorkOrderService {
     // ==========================
     // FILTER BY CUSTOMER
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> getWorkOrdersByCustomer(
             Long customerId,
             int page,
@@ -147,6 +161,8 @@ public class WorkOrderService {
     // ==========================
     // FILTER BY TECHNICIAN
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> getWorkOrdersByTechnician(
             Long technicianId,
             int page,
@@ -163,6 +179,8 @@ public class WorkOrderService {
     // ==========================
     // FILTER BY SITE
     // ==========================
+
+    @Transactional(readOnly = true)
     public Page<WorkOrderResponse> getWorkOrdersBySite(
             Long siteId,
             int page,
@@ -179,6 +197,8 @@ public class WorkOrderService {
     // ==========================
     // GET BY ID
     // ==========================
+
+    @Transactional(readOnly = true)
     public WorkOrderResponse getWorkOrderById(Long id) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -190,6 +210,7 @@ public class WorkOrderService {
     // ==========================
     // UPDATE
     // ==========================
+
     public WorkOrderResponse updateWorkOrder(Long id, WorkOrderRequest request) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -253,6 +274,7 @@ public class WorkOrderService {
     // ==========================
     // DELETE
     // ==========================
+
     public void deleteWorkOrder(Long id) {
 
         WorkOrder workOrder = workOrderRepository.findById(id)
@@ -264,6 +286,7 @@ public class WorkOrderService {
     // ==========================
     // CALCULATE SLA DUE DATE
     // ==========================
+
     private LocalDateTime calculateSlaDueDate(WorkOrderPriority priority) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -283,6 +306,7 @@ public class WorkOrderService {
     // ==========================
     // ENTITY → RESPONSE DTO
     // ==========================
+
     private WorkOrderResponse mapToResponse(WorkOrder workOrder) {
 
         return WorkOrderResponse.builder()

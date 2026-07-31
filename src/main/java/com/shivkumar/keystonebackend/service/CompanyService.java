@@ -6,16 +6,21 @@ import com.shivkumar.keystonebackend.entity.Company;
 import com.shivkumar.keystonebackend.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
-    // Create Company
+    // ==========================
+    // CREATE COMPANY
+    // ==========================
+
     public CompanyResponse createCompany(CompanyRequest request) {
 
         Company company = Company.builder()
@@ -31,7 +36,11 @@ public class CompanyService {
         return mapToResponse(savedCompany);
     }
 
-    // Get All Companies
+    // ==========================
+    // GET ALL COMPANIES
+    // ==========================
+
+    @Transactional(readOnly = true)
     public List<CompanyResponse> getAllCompanies() {
 
         return companyRepository.findAll()
@@ -40,7 +49,11 @@ public class CompanyService {
                 .toList();
     }
 
-    // Get Company By ID
+    // ==========================
+    // GET COMPANY BY ID
+    // ==========================
+
+    @Transactional(readOnly = true)
     public CompanyResponse getCompanyById(Long id) {
 
         Company company = companyRepository.findById(id)
@@ -49,7 +62,10 @@ public class CompanyService {
         return mapToResponse(company);
     }
 
-    // Update Company
+    // ==========================
+    // UPDATE COMPANY
+    // ==========================
+
     public CompanyResponse updateCompany(Long id, CompanyRequest request) {
 
         Company company = companyRepository.findById(id)
@@ -66,7 +82,10 @@ public class CompanyService {
         return mapToResponse(updatedCompany);
     }
 
-    // Delete Company
+    // ==========================
+    // DELETE COMPANY
+    // ==========================
+
     public void deleteCompany(Long id) {
 
         Company company = companyRepository.findById(id)
@@ -75,8 +94,12 @@ public class CompanyService {
         companyRepository.delete(company);
     }
 
-    // Entity -> DTO Mapper
+    // ==========================
+    // ENTITY -> DTO MAPPER
+    // ==========================
+
     private CompanyResponse mapToResponse(Company company) {
+
         return CompanyResponse.builder()
                 .id(company.getId())
                 .companyName(company.getCompanyName())
