@@ -8,6 +8,7 @@ import com.shivkumar.keystonebackend.service.WorkOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/work-orders")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','TECHNICIAN')")
 public class WorkOrderController {
 
     private final WorkOrderService workOrderService;
@@ -36,53 +38,45 @@ public class WorkOrderController {
 
     @GetMapping
     public List<WorkOrderResponse> getAllWorkOrders() {
+
         return workOrderService.getAllWorkOrders();
     }
 
     // ==========================
     // SEARCH BY TITLE
-    // Example:
-    // /api/work-orders/search?title=pump&page=0&size=10
     // ==========================
 
     @GetMapping("/search")
     public Page<WorkOrderResponse> searchWorkOrders(
             @RequestParam String title,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.searchWorkOrders(title, page, size);
     }
 
     // ==========================
     // FILTER BY STATUS
-    // Example:
-    // /api/work-orders/status/OPEN?page=0&size=10
     // ==========================
 
     @GetMapping("/status/{status}")
     public Page<WorkOrderResponse> getByStatus(
             @PathVariable WorkOrderStatus status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.getWorkOrdersByStatus(status, page, size);
     }
 
     // ==========================
     // FILTER BY PRIORITY
-    // Example:
-    // /api/work-orders/priority/HIGH?page=0&size=10
     // ==========================
 
     @GetMapping("/priority/{priority}")
     public Page<WorkOrderResponse> getByPriority(
             @PathVariable WorkOrderPriority priority,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.getWorkOrdersByPriority(priority, page, size);
     }
@@ -95,8 +89,7 @@ public class WorkOrderController {
     public Page<WorkOrderResponse> getByCustomer(
             @PathVariable Long customerId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.getWorkOrdersByCustomer(customerId, page, size);
     }
@@ -109,8 +102,7 @@ public class WorkOrderController {
     public Page<WorkOrderResponse> getByTechnician(
             @PathVariable Long technicianId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.getWorkOrdersByTechnician(technicianId, page, size);
     }
@@ -123,8 +115,7 @@ public class WorkOrderController {
     public Page<WorkOrderResponse> getBySite(
             @PathVariable Long siteId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return workOrderService.getWorkOrdersBySite(siteId, page, size);
     }
@@ -134,7 +125,9 @@ public class WorkOrderController {
     // ==========================
 
     @GetMapping("/{id}")
-    public WorkOrderResponse getWorkOrderById(@PathVariable Long id) {
+    public WorkOrderResponse getWorkOrderById(
+            @PathVariable Long id) {
+
         return workOrderService.getWorkOrderById(id);
     }
 
@@ -145,8 +138,7 @@ public class WorkOrderController {
     @PutMapping("/{id}")
     public WorkOrderResponse updateWorkOrder(
             @PathVariable Long id,
-            @Valid @RequestBody WorkOrderRequest request
-    ) {
+            @Valid @RequestBody WorkOrderRequest request) {
 
         return workOrderService.updateWorkOrder(id, request);
     }
@@ -156,7 +148,8 @@ public class WorkOrderController {
     // ==========================
 
     @DeleteMapping("/{id}")
-    public String deleteWorkOrder(@PathVariable Long id) {
+    public String deleteWorkOrder(
+            @PathVariable Long id) {
 
         workOrderService.deleteWorkOrder(id);
 

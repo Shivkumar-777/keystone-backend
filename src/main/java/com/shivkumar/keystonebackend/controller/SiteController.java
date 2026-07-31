@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sites")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','TECHNICIAN')")
 public class SiteController {
 
     private final SiteService siteService;
@@ -24,7 +26,8 @@ public class SiteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SiteResponse createSite(@Valid @RequestBody SiteRequest request) {
+    public SiteResponse createSite(
+            @Valid @RequestBody SiteRequest request) {
 
         return siteService.createSite(request);
     }
@@ -41,8 +44,6 @@ public class SiteController {
 
     // ==========================
     // SEARCH BY SITE NAME
-    // Example:
-    // /api/sites/search?siteName=Factory&page=0&size=10
     // ==========================
 
     @GetMapping("/search")
@@ -111,7 +112,8 @@ public class SiteController {
     // ==========================
 
     @GetMapping("/{id}")
-    public SiteResponse getSiteById(@PathVariable Long id) {
+    public SiteResponse getSiteById(
+            @PathVariable Long id) {
 
         return siteService.getSiteById(id);
     }
@@ -134,7 +136,8 @@ public class SiteController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSite(@PathVariable Long id) {
+    public void deleteSite(
+            @PathVariable Long id) {
 
         siteService.deleteSite(id);
     }

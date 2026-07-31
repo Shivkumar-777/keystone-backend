@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/technicians")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class TechnicianController {
 
     private final TechnicianService technicianService;
@@ -37,13 +39,12 @@ public class TechnicianController {
 
     @GetMapping
     public List<TechnicianResponse> getAllTechnicians() {
+
         return technicianService.getAllTechnicians();
     }
 
     // ==========================
     // SEARCH BY NAME
-    // Example:
-    // /api/technicians/search?fullName=John&page=0&size=10
     // ==========================
 
     @GetMapping("/search")
@@ -57,8 +58,6 @@ public class TechnicianController {
 
     // ==========================
     // SEARCH BY EMAIL
-    // Example:
-    // /api/technicians/search/email?email=john@gmail.com
     // ==========================
 
     @GetMapping("/search/email")
@@ -72,8 +71,6 @@ public class TechnicianController {
 
     // ==========================
     // SEARCH BY PHONE
-    // Example:
-    // /api/technicians/search/phone?phone=9876543210
     // ==========================
 
     @GetMapping("/search/phone")
@@ -87,8 +84,6 @@ public class TechnicianController {
 
     // ==========================
     // SEARCH BY SPECIALIZATION
-    // Example:
-    // /api/technicians/search/specialization?specialization=Electrical
     // ==========================
 
     @GetMapping("/search/specialization")
@@ -106,8 +101,6 @@ public class TechnicianController {
 
     // ==========================
     // FILTER BY STATUS
-    // Example:
-    // /api/technicians/status/AVAILABLE?page=0&size=10
     // ==========================
 
     @GetMapping("/status/{status}")
@@ -152,7 +145,9 @@ public class TechnicianController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTechnician(@PathVariable Long id) {
+    public void deleteTechnician(
+            @PathVariable Long id) {
+
         technicianService.deleteTechnician(id);
     }
 }

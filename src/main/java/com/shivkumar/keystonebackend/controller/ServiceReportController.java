@@ -7,6 +7,7 @@ import com.shivkumar.keystonebackend.service.ServiceReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/service-reports")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','TECHNICIAN')")
 public class ServiceReportController {
 
     private final ServiceReportService serviceReportService;
@@ -42,8 +44,6 @@ public class ServiceReportController {
 
     // ==========================
     // SEARCH WORK PERFORMED
-    // Example:
-    // /api/service-reports/search/work?workPerformed=Inspection&page=0&size=10
     // ==========================
 
     @GetMapping("/search/work")
