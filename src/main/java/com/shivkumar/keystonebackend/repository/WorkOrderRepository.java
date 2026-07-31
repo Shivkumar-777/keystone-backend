@@ -18,6 +18,18 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, Long> {
 
     long countByStatus(WorkOrderStatus status);
 
+    long countByPriority(WorkOrderPriority priority);
+
+    long countByTechnicianId(Long technicianId);
+
+    // Count overdue work orders
+    long countBySlaDueDateBeforeAndStatusNot(
+            LocalDateTime dateTime,
+            WorkOrderStatus status
+    );
+
+    List<WorkOrder> findByStatus(WorkOrderStatus status);
+
     // ==========================
     // Active Work Orders
     // ==========================
